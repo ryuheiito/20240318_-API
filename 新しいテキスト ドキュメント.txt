@@ -1,0 +1,156 @@
+以下の作業に変更してください。
+
+1. CSVSscaleが0のものを探し、その中でDepthが最大のものを想定最大最大浸水深とする。ない場合は降雨規模の欄に想定最大浸水無しと記載してください。
+2. CSVSscaleが1のものを探し、その中でDepthが最大のものを計画規模最大最大浸水深とする。ない場合は降雨規模の欄に想定最大浸水無しと記載してください。
+3. Depthがある場合、出力は浸水深が最大、2番目に最大、3番目に最大のものを同じ名前の欄に出力してください。また、河川名も同じ欄に出力してください
+
+
+
+
+破堤点情報
+https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetBreakPoint?lon=139.456147&lat=35.98707&returnparams=CSVScale,ID
+
+最大浸水破堤点
+https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetBreakPointMaxDepth?lon=139.456147&lat=35.98707
+
+破堤点浸水深
+https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetMaxDepth?lon=132.825909&lat=35.4 15775&bpid=32074c8e-e3e6-4801-b243-698a16ff9e8a
+
+
+#破堤点取得
+以下の作業をpythonで記述してください。なおデータのエンコードはshift-jisとします
+
+1.URL=’https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetBreakPoint?lon=経度&lat=緯度 ’
+　　からデータを取得します。
+　　URLの経度と緯度はinputフォルダのaddress.csvの3列目,2列目から取得し置き換えてください。1列目は建物名です。1行目はヘッダーです。
+　　な複数の建物に対応できるようにしてください。
+
+2.jsonデータが返り値で出力されますのでoutput/破堤点一覧に建物ごとにcsv出力してください。
+  なおjsonの返り値は以下のように出力されます。数値はダミーです。
+
+戻り値（パラメータが正しく、検索結果がある場合）：
+戻り値（パラメータが正しく、検索結果がある場合）：
+[{
+"ID": "b60fc6bb-5081-4bd6-b203-3c499884ee86",
+"BPName": "BP048",
+"BPLocation": "斐伊川 4.8Km 右岸破堤",
+"BPLat": 35.4207662,
+"BPLon": 132.8294757,
+"WSID": "5e32710d-145b-466a-acb1-edfc68ecd386",
+"CSVScale": 0,
+"EntryRiverName": "斐伊川",
+"RiverCode": "8707040001",
+"SubRiverCode": "_",
+"OfficeCode": "22303",
+"BPTime": [10,20,30,60,120,180,360,720,1440,2160,2880],
+"isDepthMax": false,
+"isStartMax": false,
+"isDurationMax": false
+},
+{
+"ID": "3b0bf6fb-bb5a-44ac-b07d-c790d51007f7",
+"BPName": "BP049",
+"BPLocation": "斐伊川 5.0Km",
+"BPLat": 35.41973365,
+"BPLon": 132.8276664,
+"WSID": "5e32710d-145b-466a-acb1-edfc68ecd386",
+5
+"CSVScale": 0,
+"EntryRiverName ": "斐伊川",
+"RiverCode": "8707040001",
+"SubRiverCode": "_",
+"OfficeCode": "22303",
+"BPTime": [10,20,30,60,120,180,360,720,1440,2160,2880],
+"isDepthMax": true,
+"isStartMax": false,
+"isDurationMax": false
+},
+{
+"ID": "794a6bbc-6b46-46b6-b1e5-745526544484",
+"BPName": "BP050",
+"BPLocation": "斐伊川 5.2Km 右岸破堤",
+"BPLat": 35.41885745,
+"BPLon": 132.8256661,
+"WSID": "5e32710d-145b-466a-acb1-edfc68ecd386",
+"CSVScale": 0,
+"RiverName": "斐伊川",
+"RiverCode": "8707040001",
+"SubRiverCode": "_",
+"OfficeCode": "22303",
+"BPTime": [10,20,30,60,120,180,360,720,1440,2160,2880],
+"isDepthMax": false,
+"isStartMax": true,
+"isDurationMax": true
+}]
+戻り値（パラメータが正しく、検索結果がない場合）：
+[]
+
+#最も浸水が発生する破堤箇所の算出
+以下の作業をpythonで記述してください。なおデータのエンコードはshift-jisとします
+
+1.output/破堤点一覧のcsvデータをすべて読み取ります。
+　なお、ファイル名は建物名です。
+
+2.csvファイルの1列目は破堤点IDです。3列目は破堤点名です。7列目はcsvscaleです。
+　すべてのcsvデータで最も頻出の破堤点IDの上位5かつcsvscaleが0のものを
+　output/最も浸水する箇所が多い破堤点フォルダに出力してください。
+　その時、該当している建物名も出力してください。
+　
+
+
+
+
+
+#最大浸水破堤点取得
+以下の作業をpythonで記述してください。なおデータのエンコードはshift-jisとします
+
+1.URL=’https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetBreakPointMaxDepth?lon=経度&lat=緯度 ’
+　　からデータを取得します。
+　　URLの経度と緯度はinputフォルダのaddress.csvの3列目,2列目から取得し置き換えてください。1列目は建物名です。1行目はヘッダーです。
+　　な複数の建物に対応できるようにしてください。
+
+2.jsonデータが返り値で出力されますのでoutputに全てまとめてcsv出力してください。
+  なおjsonの返り値は以下のように出力されます。数値はダミーです。
+
+戻り値（パラメータが正しく、検索結果がある場合）：
+{
+"ID":"419e9c6f-50b7-4cb0-a716-609dd9e31480",
+"BPName":"BP118",
+"BPLocation":"斐伊川 5.4Km 右岸破堤",
+"BPLat":35.41803167,
+"BPLon":132.8236599,
+"WSID":[],
+"EntryRiverName":"斐伊川",
+"RiverCode":"8707040001",
+"SubRiverCode":"_",
+"OfficeCode":"22303",
+"CSVScale":0,
+"BPTime":[10,20,30,60,120,180,360,720,1440,2160,2880]
+}
+戻り値（パラメータが正しく、検索結果がない場合）：
+[]
+
+
+
+#最大浸水深取得
+以下の作業をpythonで記述してください。なおデータのエンコードはshift-jisとします
+
+1.URL=’https://suiboumap.gsi.go.jp/shinsuimap/Api/Public/GetMaxDepth?lon=経度&lat=
+　緯度&bpid=破堤点ID ’からデータを取得します。
+　URLの経度と緯度はinputフォルダのaddress.csvの3列目,2列目から取得し置き換えてください。1列目は建物名です。1行目はヘッダーです。
+　破堤点ID はoutputフォルダのmaxpoint_data.csvの2列目から取得し置き換えてください。1列目は建物名です。1行目はヘッダーです。
+
+2.jsonデータが返り値で出力されますのでoutputに全てまとめてcsv出力してください。
+  なおjsonの返り値は以下のように出力されます。数値はダミーです。
+
+戻り値（パラメータが正しく、検索結果がある場合）：
+{
+"Depth":1.279,
+"OfficeCode":"22303",
+"RiverCode":"8707040001",
+"SubRiverCode":"_",
+"CSVScale":0,
+"GroupType":0
+}
+戻り値（パラメータが正しく、検索結果がない場合）：
+[]
